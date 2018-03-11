@@ -76,9 +76,12 @@ namespace testGeneric
                     ), param);
                     
 
-            var conditionContains = GetExpressionContains<T>(domainName, value, type);
+            var expressionContains = GetExpressionContains<T>(domainName, value, type);
+            var expressionCombinedWithToLower = GetExpressionContainsWithToLower<T>(domainName, value, type);
 
-            query = query.Where(conditionEquals);
+            var expressionCombined = Expression.AndAssign(expressionContains, expressionCombinedWithToLower);
+
+            query = query.Where(expressionContains);
             return query;
         }
 
@@ -90,12 +93,51 @@ namespace testGeneric
 	    { 
 	        var parameterExp = Expression.Parameter(typeof(T), "type"); 
 	        var propertyExp = Expression.Property(parameterExp, propertyName); 
-	        MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string) }); 
+	        MethodInfo method = type.GetMethod("Contains", new[] { type }); 
 	        var someValue = Expression.Constant(propertyValue, type); 
 	        var containsMethodExp = Expression.Call(propertyExp, method, someValue); 
 	 	    return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameterExp); 
 	    }
 
+        private static Expression<Func<T, bool>> GetExpressionContainsWithToLower<T>(string propertyName, object propertyValue, Type type)
+        {
+            var parameterExp = Expression.Parameter(typeof(T), "type");
+            var propertyExp = Expression.Property(parameterExp, propertyName);
+            MethodInfo methodContains = type.GetMethod("Contains", new[] { type });
+            MethodInfo methodToLower = type.GetMethod("ToLower", Type.EmptyTypes);
+
+            var someValue = Expression.Constant(propertyValue, type);
+
+            var combined = Expression.Call(parameterExp, methodContains, someValue);
+            var contains = Expression.Call(combined, methodToLower);
+
+            //methodbod
+
+
+
+            return Expression.Lambda<Func<T, bool>>(combined, parameterExp);
+        }
+
+
+        private static Expression GetMemberExpression(Expression expression, out ParameterExpression parameterExpression)
+        {
+            parameterExpression = null;
+            if (expression is MemberExpression)
+            {
+                var memberExpression = expression as MemberExpression;
+                while (!(memberExpression.Expression is ParameterExpression))
+                    memberExpression = memberExpression.Expression as MemberExpression;
+                parameterExpression = memberExpression.Expression as ParameterExpression;
+                return expression as MemberExpression;
+            }
+            if (expression is MethodCallExpression)
+            {
+                var methodCallExpression = expression as MethodCallExpression;
+                parameterExpression = methodCallExpression.Object as ParameterExpression;
+                return methodCallExpression;
+            }
+            return null;
+        }
 
 
         private static string GetPropertyType(string type)

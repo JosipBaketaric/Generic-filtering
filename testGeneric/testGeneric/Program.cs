@@ -12,7 +12,7 @@ namespace testGeneric
         {
 
             var filter = new filterDTO();
-            filter.Name = "da";
+            filter.Name = "Da";
             filter.Id = 1;
 
             var list = new List<TestDTO>();
