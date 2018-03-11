@@ -1,0 +1,6 @@
+C:\Users\Josip\Desktop\in2\testGeneric\testGeneric\bin\Debug\testGeneric.exe.config
+C:\Users\Josip\Desktop\in2\testGeneric\testGeneric\bin\Debug\testGeneric.exe
+C:\Users\Josip\Desktop\in2\testGeneric\testGeneric\bin\Debug\testGeneric.pdb
+C:\Users\Josip\Desktop\in2\testGeneric\testGeneric\obj\Debug\testGeneric.csprojResolveAssemblyReference.cache
+C:\Users\Josip\Desktop\in2\testGeneric\testGeneric\obj\Debug\testGeneric.exe
+C:\Users\Josip\Desktop\in2\testGeneric\testGeneric\obj\Debug\testGeneric.pdb
