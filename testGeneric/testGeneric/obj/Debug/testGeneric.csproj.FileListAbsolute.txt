@@ -10,3 +10,10 @@ C:\Users\Josip\Desktop\in2\Generic-filtering\testGeneric\testGeneric\obj\Debug\t
 C:\Users\Josip\Desktop\in2\Generic-filtering\testGeneric\testGeneric\obj\Debug\testGeneric.csprojResolveAssemblyReference.cache
 C:\Users\Josip\Desktop\in2\Generic-filtering\testGeneric\testGeneric\bin\Debug\testGeneric.exe
 C:\Users\Josip\Desktop\in2\Generic-filtering\testGeneric\testGeneric\bin\Debug\testGeneric.pdb
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\testGeneric.exe.config
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\testGeneric.exe
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\testGeneric.pdb
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\testGeneric.csprojResolveAssemblyReference.cache
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\testGeneric.csproj.CoreCompileInputs.cache
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\testGeneric.exe
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\testGeneric.pdb

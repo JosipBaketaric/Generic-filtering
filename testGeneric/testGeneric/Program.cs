@@ -10,20 +10,15 @@ namespace testGeneric
     {
         static void Main(string[] args)
         {
+            var dateNow = DateTime.Now;
 
             var filter = new filterDTO();
-            filter.Name = "Da";
-            filter.Id = 1;
-
-            var list = new List<TestDTO>();
-            list.Add(new TestDTO {Name="da" });
-            list.Add(new TestDTO {Name = "da" });
-            list.Add(new TestDTO {Name = "ne" });
+            filter.DatumTest = dateNow;
 
             var domainList = new List<TestDomain>();
-            domainList.Add(new TestDomain { NAME = "da", ID = 1 });
-            domainList.Add(new TestDomain { NAME = "da", ID = 2 });
-            domainList.Add(new TestDomain { NAME = "ne", ID = 1 });
+            domainList.Add(new TestDomain { NAME = "da", ID = 1, DATUM_TEST = dateNow });
+            domainList.Add(new TestDomain { NAME = "da", ID = 2, DATUM_TEST = dateNow.AddDays(1) });
+            domainList.Add(new TestDomain { NAME = "ne", ID = 3 , DATUM_TEST = dateNow.AddDays(2) });
 
 
             IQueryable<TestDomain> query = domainList.AsQueryable();

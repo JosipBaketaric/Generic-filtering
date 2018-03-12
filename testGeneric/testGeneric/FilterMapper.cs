@@ -33,6 +33,9 @@ namespace testGeneric
                     case "text":
                         query = HandleText(query, value, name, property, domainName);
                         break;
+                    case "date":
+                        query = HandleDate(query, value, name, property, domainName);
+                        break;
                     default:
                         break;
                 }
@@ -46,6 +49,14 @@ namespace testGeneric
         #region Handlers
         private static IQueryable<T> HandleNumber<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName)
         {
+            if (value == null)
+                return query;
+
+            object defaultValToCompare = 0;
+
+            if (value == defaultValToCompare)
+                return query;
+
             ParameterExpression pe = Expression.Parameter(property.PropertyType, domainName);
             var param = Expression.Parameter(typeof(T));
 
@@ -62,27 +73,75 @@ namespace testGeneric
             return query;
         }
 
-        private static IQueryable<T> HandleText<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName)
+        private static IQueryable<T> HandleDate<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName)
         {
-            var type = property.PropertyType;
+            if (value == null)
+                return null;
+
             ParameterExpression pe = Expression.Parameter(property.PropertyType, domainName);
             var param = Expression.Parameter(typeof(T));
-            
-            var conditionEquals =
+
+            var type = property.PropertyType;
+
+            var condition =
                 Expression.Lambda<Func<T, bool>>(
                     Expression.Equal(
                         Expression.Property(param, domainName),
                         Expression.Constant(value, type)
                     ), param);
-                    
 
-            var expressionContains = GetExpressionContains<T>(domainName, value, type);
-            var expressionCombinedWithToLower = GetExpressionContainsWithToLower<T>(domainName, value, type);
-
-            var expressionCombined = Expression.AndAssign(expressionContains, expressionCombinedWithToLower);
-
-            query = query.Where(expressionContains);
+            query = query.Where(condition);
             return query;
+        }
+
+        private static IQueryable<T> HandleText<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName)
+        {
+            if (value == null)
+                return query;
+
+            var valueString = value.ToString();
+            if (string.IsNullOrEmpty(valueString))
+                return query;
+
+
+            try
+            {
+
+
+                var type = property.PropertyType;
+                ParameterExpression pe = Expression.Parameter(property.PropertyType, domainName);
+                var param = Expression.Parameter(typeof(T));
+
+                var conditionEquals =
+                    Expression.Lambda<Func<T, bool>>(
+                        Expression.Equal(
+                            Expression.Property(param, domainName),
+                            Expression.Constant(value, type)
+                        ), param);
+
+
+                var expressionContains = GetExpressionContains<T>(domainName, value, type);
+
+                query = query.Where(expressionContains);
+                return query;
+            }
+            catch(Exception e)
+            {
+                var type = property.PropertyType;
+                ParameterExpression pe = Expression.Parameter(property.PropertyType, domainName);
+                var param = Expression.Parameter(typeof(T));
+
+                var conditionEquals =
+                    Expression.Lambda<Func<T, bool>>(
+                        Expression.Equal(
+                            Expression.Property(param, domainName),
+                            Expression.Constant(value, type)
+                        ), param);
+
+                query = query.Where(conditionEquals);
+                return query;
+            }
+
         }
 
         #endregion
@@ -99,23 +158,22 @@ namespace testGeneric
 	 	    return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameterExp); 
 	    }
 
-        private static Expression<Func<T, bool>> GetExpressionContainsWithToLower<T>(string propertyName, object propertyValue, Type type)
+        private static Expression<Func<T, bool>> GetExpressionContainsWithToLower<T>(string propertyName, string propertyValue, Type type)
         {
-            var parameterExp = Expression.Parameter(typeof(T), "type");
+            var parameterExp = Expression.Parameter(typeof(string), "type");
             var propertyExp = Expression.Property(parameterExp, propertyName);
-            MethodInfo methodContains = type.GetMethod("Contains", new[] { type });
-            MethodInfo methodToLower = type.GetMethod("ToLower", Type.EmptyTypes);
+            MethodInfo methodContains = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+            MethodInfo methodToLower = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
 
-            var someValue = Expression.Constant(propertyValue, type);
+            var someValue = Expression.Constant(propertyValue, typeof(string));
 
-            var combined = Expression.Call(parameterExp, methodContains, someValue);
-            var contains = Expression.Call(combined, methodToLower);
+            var contains = Expression.Call(propertyExp, methodContains, someValue);
 
             //methodbod
 
 
 
-            return Expression.Lambda<Func<T, bool>>(combined, parameterExp);
+            return Expression.Lambda<Func<T, bool>>(contains, parameterExp);
         }
 
 
@@ -175,7 +233,8 @@ namespace testGeneric
             { "string?", "text" },
             { "char?", "text" },
             { "bool", "bool" },
-            { "bool?", "bool" }
+            { "bool?", "bool" },
+            { "datetime", "date" },
         };
 
         #endregion

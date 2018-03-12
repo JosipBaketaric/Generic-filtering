@@ -11,5 +11,6 @@ namespace testGeneric
     {
         public long? ID { get; set; }
         public string NAME { get; set; }
+        public DateTime DATUM_TEST { get; set; }
     }
 }

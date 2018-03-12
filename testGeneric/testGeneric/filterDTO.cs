@@ -14,5 +14,9 @@ namespace testGeneric
 
         [Description("ID")]
         public long? Id { get; set; }
+        
+        [Description("DATUM_TEST")]
+        public DateTime DatumTest { get; set; }
+
     }
 }
