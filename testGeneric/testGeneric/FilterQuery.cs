@@ -85,7 +85,7 @@ namespace GenericFiltering
         }
 
 
-        #region Handlers
+    #region Handlers
         private static IQueryable<T> HandleNumber<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName, PropertyComparison propertyComparison)
         {
             if (value == null)
@@ -201,10 +201,9 @@ namespace GenericFiltering
 
         }
 
-        #endregion
+    #endregion
 
-        #region Helpers
-
+    #region expressions
         private static Expression<Func<T, bool>> GetExpressionContains<T>(string propertyName, object propertyValue, Type type)
 	    { 
 	        var parameterExp = Expression.Parameter(typeof(T), "type"); 
@@ -214,27 +213,6 @@ namespace GenericFiltering
 	        var containsMethodExp = Expression.Call(propertyExp, method, someValue); 
 	 	    return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameterExp); 
 	    }
-
-        private static Expression<Func<T, bool>> GetExpressionContainsWithToLower<T>(string propertyName, string propertyValue, Type type)
-        {
-            var parameterExp = Expression.Parameter(typeof(string), "type");
-            var propertyExp = Expression.Property(parameterExp, propertyName);
-            MethodInfo methodContains = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-            MethodInfo methodToLower = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
-
-            var someValue = Expression.Constant(propertyValue, typeof(string));
-
-            var contains = Expression.Call(propertyExp, methodContains, someValue);
-
-            //methodbod
-
-
-
-            return Expression.Lambda<Func<T, bool>>(contains, parameterExp);
-        }
-
-
-
         private static Expression<Func<T, bool>> GetExpressionGreater<T>(string propertyName, object propertyValue, Type type)
         {
             ParameterExpression pe = Expression.Parameter(type, propertyName);
@@ -315,29 +293,9 @@ namespace GenericFiltering
 
             return condition;
         }
+    #endregion
 
-
-        private static Expression GetMemberExpression(Expression expression, out ParameterExpression parameterExpression)
-        {
-            parameterExpression = null;
-            if (expression is MemberExpression)
-            {
-                var memberExpression = expression as MemberExpression;
-                while (!(memberExpression.Expression is ParameterExpression))
-                    memberExpression = memberExpression.Expression as MemberExpression;
-                parameterExpression = memberExpression.Expression as ParameterExpression;
-                return expression as MemberExpression;
-            }
-            if (expression is MethodCallExpression)
-            {
-                var methodCallExpression = expression as MethodCallExpression;
-                parameterExpression = methodCallExpression.Object as ParameterExpression;
-                return methodCallExpression;
-            }
-            return null;
-        }
-
-
+    #region Helpers
         private static string GetPropertyType(string type)
         {
             try
@@ -350,14 +308,6 @@ namespace GenericFiltering
                 throw new Exception("Error in FilterMapper -> GetPropertyType.\n Mapping for property: " + type + " not existing");
             }
         }
-
-        private static T? GetValue<T>(object value) where T : struct
-        {
-            if (value == null || value is DBNull) return null;
-            if (value is T) return (T)value;
-            return (T)Convert.ChangeType(value, typeof(T));
-        }
-
         private static Dictionary<string, string> _propertyDictionary = new Dictionary<string, string>
         {
             { "int", "number" },
@@ -377,6 +327,7 @@ namespace GenericFiltering
             { "datetime", "date" },
         };
 
-        #endregion
+    #endregion
+
     }
 }

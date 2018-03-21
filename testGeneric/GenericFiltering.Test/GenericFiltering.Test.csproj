@@ -48,6 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DateFilteringTests.cs" />
     <Compile Include="TextFilteringTests.cs" />
     <Compile Include="NumberFilteringTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
