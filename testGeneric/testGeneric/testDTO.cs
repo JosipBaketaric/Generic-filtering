@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace testGeneric
+namespace GenericFiltering
 {
     public class TestDTO
     {

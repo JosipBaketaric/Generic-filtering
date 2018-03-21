@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace testGeneric
+namespace GenericFiltering
 {
-    public class filterDTO
+    public class FilterDTO
     {
         [Description("NAME")]
         public string Name { get; set; }
@@ -16,7 +16,7 @@ namespace testGeneric
         public long? Id { get; set; }
         
         [Description("DATUM_TEST")]
-        public DateTime DatumTest { get; set; }
+        public DateTime? DatumTest { get; set; }
 
     }
 }

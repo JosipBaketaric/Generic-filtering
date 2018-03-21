@@ -1,0 +1,12 @@
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\testGeneric.exe.config
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\testGeneric.exe
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\testGeneric.pdb
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\EntityFramework.dll
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\LinqKit.dll
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\EntityFramework.xml
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Debug\LinqKit.xml
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\GenericFiltering.csproj.CoreCompileInputs.cache
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\testGeneric.exe
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\testGeneric.pdb

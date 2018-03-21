@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace testGeneric
+namespace GenericFiltering
 {
     class Program
     {
@@ -12,8 +12,10 @@ namespace testGeneric
         {
             var dateNow = DateTime.Now;
 
-            var filter = new filterDTO();
+            var filter = new FilterDTO();
             filter.DatumTest = dateNow;
+            filter.Id = 1;
+            filter.Name = "da";
 
             var domainList = new List<TestDomain>();
             domainList.Add(new TestDomain { NAME = "da", ID = 1, DATUM_TEST = dateNow });
@@ -23,8 +25,10 @@ namespace testGeneric
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
+            var customList = new List<KeyValuePair<string, PropertyComparison>>();
+            customList.Add(new KeyValuePair<string, PropertyComparison>("Id", PropertyComparison.Greater));
 
-            query = FilterMapper.SetFilters<TestDomain, filterDTO>(query, filter);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, new List<string> { "DatumTest" }, customList);
             var rez = query.ToList();
 
         }
