@@ -275,5 +275,32 @@ namespace GenericFiltering.Test
             Assert.IsTrue(rez.ElementAt(0).ID <= 1, "The actual result was not greater or equal than 1");
         }
 
+        [TestMethod]
+        public void TestFilterDecimal()
+        {
+            //arange
+            var dateNow = DateTime.Now;
+
+            var domainList = new List<TestDomain>();
+            domainList.Add(new TestDomain { ID = 1, NAME = "da", DATUM_TEST = dateNow, BOOL_PROP = true, CHAR_PROP = 'a', DECIMAL_PROP = 1, INT_PROP = 1 });
+            domainList.Add(new TestDomain { ID = 1, NAME = "da", DATUM_TEST = dateNow, BOOL_PROP = true, CHAR_PROP = 'a', DECIMAL_PROP = 1, INT_PROP = 1 });
+            domainList.Add(new TestDomain { ID = 1, NAME = "da", DATUM_TEST = dateNow, BOOL_PROP = true, CHAR_PROP = 'a', DECIMAL_PROP = 1, INT_PROP = 1 });
+            domainList.Add(new TestDomain { ID = 1, NAME = "ne", DATUM_TEST = dateNow, BOOL_PROP = false, CHAR_PROP = 'b', DECIMAL_PROP = 2, INT_PROP = 2 });
+            domainList.Add(new TestDomain { ID = 1, NAME = "ne", DATUM_TEST = dateNow, BOOL_PROP = false, CHAR_PROP = 'b', DECIMAL_PROP = 2, INT_PROP = 2 });
+
+
+            var filter = new FilterDTO();
+            filter.DecimalProp = 2;
+
+            IQueryable<TestDomain> query = domainList.AsQueryable();
+
+            //act
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter);
+            var rez = query.ToList();
+
+            //assert
+            Assert.AreEqual(2, rez.Count);
+        }
+
     }
 }

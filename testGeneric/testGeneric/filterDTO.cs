@@ -18,5 +18,17 @@ namespace GenericFiltering
         [Description("DATUM_TEST")]
         public DateTime? DatumTest { get; set; }
 
+        [Description("INT_PROP")]
+        public int? IntProp { get; set; }
+
+        [Description("DECIMAL_PROP")]
+        public decimal? DecimalProp { get; set; }
+
+        [Description("CHAR_PROP")]
+        public char CharProp { get; set; }
+
+        [Description("BOOL_PROP")]
+        public bool? BoolProp { get; set; }
+
     }
 }

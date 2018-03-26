@@ -12,5 +12,9 @@ namespace GenericFiltering
         public long? ID { get; set; }
         public string NAME { get; set; }
         public DateTime? DATUM_TEST { get; set; }
+        public int INT_PROP { get; set; }
+        public decimal DECIMAL_PROP { get; set; }
+        public char CHAR_PROP { get; set; }
+        public bool BOOL_PROP { get; set; }
     }
 }

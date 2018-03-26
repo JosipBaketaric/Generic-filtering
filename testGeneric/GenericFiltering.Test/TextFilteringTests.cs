@@ -201,5 +201,32 @@ namespace GenericFiltering.Test
             //assert
             Assert.AreEqual(domainList.Where(x=> x.NAME == filter.Name).ToList().Count, rez.Count);
         }
+
+        [TestMethod]
+        public void TestFilterChar()
+        {
+            //arange
+            var dateNow = DateTime.Now;
+
+            var domainList = new List<TestDomain>();
+            domainList.Add(new TestDomain { ID = 1, NAME = "da", DATUM_TEST = dateNow, BOOL_PROP = true, CHAR_PROP = 'a', DECIMAL_PROP = 1, INT_PROP = 1 });
+            domainList.Add(new TestDomain { ID = 1, NAME = "da", DATUM_TEST = dateNow, BOOL_PROP = true, CHAR_PROP = 'a', DECIMAL_PROP = 1, INT_PROP = 1 });
+            domainList.Add(new TestDomain { ID = 1, NAME = "da", DATUM_TEST = dateNow, BOOL_PROP = true, CHAR_PROP = 'a', DECIMAL_PROP = 1, INT_PROP = 1 });
+            domainList.Add(new TestDomain { ID = 1, NAME = "ne", DATUM_TEST = dateNow, BOOL_PROP = false, CHAR_PROP = 'b', DECIMAL_PROP = 2, INT_PROP = 2 });
+            domainList.Add(new TestDomain { ID = 1, NAME = "ne", DATUM_TEST = dateNow, BOOL_PROP = false, CHAR_PROP = 'b', DECIMAL_PROP = 2, INT_PROP = 2 });
+
+
+            var filter = new FilterDTO();
+            filter.CharProp = 'a';
+
+            IQueryable<TestDomain> query = domainList.AsQueryable();
+
+            //act
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter);
+            var rez = query.ToList();
+
+            //assert
+            Assert.AreEqual(3, rez.Count);
+        }
     }
 }

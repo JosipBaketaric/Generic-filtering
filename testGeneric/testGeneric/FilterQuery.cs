@@ -41,6 +41,10 @@ namespace GenericFiltering
             foreach (PropertyInfo property in properties)
             {
                 var value = property.GetValue(filter);
+
+                if (value == null)
+                    continue;
+
                 var type = property.PropertyType.Name;
                 var name = property.Name;
 
@@ -59,7 +63,7 @@ namespace GenericFiltering
                         customComparison = tempDateComparison.FirstOrDefault().Value;
                 }
 
-                var handleType = GetPropertyType(type);
+                var handleType = GetPropertyType(property);
                 var domainName = Attribute.IsDefined(property, typeof(DescriptionAttribute)) ?
                     (Attribute.GetCustomAttribute(property, typeof(DescriptionAttribute)) as DescriptionAttribute).Description :
                     property.Name;
@@ -67,13 +71,16 @@ namespace GenericFiltering
                 switch (handleType)
                 {
                     case "number":
-                        query = HandleNumber(query, value, name, property, domainName, customComparison);
+                        query = HandleNumber(query, value, name, property, domainName, customComparison, property.PropertyType);
                         break;
                     case "text":
-                        query = HandleText(query, value, name, property, domainName, customComparison);
+                        query = HandleText(query, value, name, property, domainName, customComparison, property.PropertyType);
                         break;
                     case "date":
-                        query = HandleDate(query, value, name, property, domainName, customComparison);
+                        query = HandleDate(query, value, name, property, domainName, customComparison, property.PropertyType);
+                        break;
+                    case "bool":
+                        query = HandleBool(query, value, name, property, domainName, customComparison, property.PropertyType);
                         break;
                     default:
                         break;
@@ -85,15 +92,43 @@ namespace GenericFiltering
         }
 
 
-    #region Handlers
-        private static IQueryable<T> HandleNumber<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName, PropertyComparison propertyComparison)
+        #region Handlers
+        private static IQueryable<T> HandleBool<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName, PropertyComparison propertyComparison, Type type)
         {
             if (value == null)
                 return query;
 
-            object defaultValToCompare = 0;
+            //Bools default is false so it has to be nullable
+            /*
+            if (CheckIfDefaultValue(value, property.PropertyType))
+                return query;
+                */
 
-            if (value == defaultValToCompare)
+            value = (bool)value;
+            type = typeof(bool);
+
+            Expression<Func<T, bool>> condition = null;
+
+            switch (propertyComparison)
+            {
+                case PropertyComparison.Equals:
+                    condition = GetExpressionEqual<T>(domainName, value);
+                    break;
+                default:
+                    condition = GetExpressionEqual<T>(domainName, value);
+                    break;
+            }
+
+            query = query.Where(condition);
+            return query;
+        }
+
+        private static IQueryable<T> HandleNumber<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName, PropertyComparison propertyComparison, Type type)
+        {
+            if (value == null)
+                return query;
+
+            if (CheckIfDefaultValue(value, type))
                 return query;
 
             Expression<Func<T, bool>> condition = null; ;
@@ -101,22 +136,22 @@ namespace GenericFiltering
             switch (propertyComparison)
             {
                 case PropertyComparison.Equals:
-                    condition = GetExpressionEqual<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionEqual<T>(domainName, value);
                     break;
                 case PropertyComparison.Greater:
-                    condition = GetExpressionGreater<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionGreater<T>(domainName, value);
                     break;
                 case PropertyComparison.Less:
-                    condition = GetExpressionLess<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionLess<T>(domainName, value);
                     break;
                 case PropertyComparison.GreaterOrEqual:
-                    condition = GetExpressionGreaterOrEqual<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionGreaterOrEqual<T>(domainName, value);
                     break;
                 case PropertyComparison.LessOrEqual:
-                    condition = GetExpressionLessOrEqual<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionLessOrEqual<T>(domainName, value);
                     break;
                 default:
-                    condition = GetExpressionEqual<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionEqual<T>(domainName, value);
                     break;
             }
 
@@ -124,32 +159,36 @@ namespace GenericFiltering
             return query;
         }
 
-        private static IQueryable<T> HandleDate<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName, PropertyComparison propertyComparison)
+        private static IQueryable<T> HandleDate<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName, PropertyComparison propertyComparison, Type type)
         {
             if (value == null)
                 return null;
+
+
+            if (CheckIfDefaultValue(value, type))
+                return query;
 
             Expression<Func<T, bool>> condition = null;
 
             switch (propertyComparison)
             {
                 case PropertyComparison.Equals:
-                    condition = GetExpressionEqual<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionEqual<T>(domainName, value);
                     break;
                 case PropertyComparison.Greater:
-                    condition = GetExpressionGreater<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionGreater<T>(domainName, value);
                     break;
                 case PropertyComparison.Less:
-                    condition = GetExpressionLess<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionLess<T>(domainName, value);
                     break;
                 case PropertyComparison.GreaterOrEqual:
-                    condition = GetExpressionGreaterOrEqual<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionGreaterOrEqual<T>(domainName, value);
                     break;
                 case PropertyComparison.LessOrEqual:
-                    condition = GetExpressionLessOrEqual<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionLessOrEqual<T>(domainName, value);
                     break;
                 default:
-                    condition = GetExpressionEqual<T>(domainName, value, property.PropertyType);
+                    condition = GetExpressionEqual<T>(domainName, value);
                     break;
             }
 
@@ -158,10 +197,15 @@ namespace GenericFiltering
             return query;
         }
 
-        private static IQueryable<T> HandleText<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName, PropertyComparison propertyComparison)
+        private static IQueryable<T> HandleText<T>(IQueryable<T> query, object value, string propName, PropertyInfo property, string domainName, PropertyComparison propertyComparison, Type type)
         {
             if (value == null)
                 return query;
+
+
+            if (CheckIfDefaultValue(value, type))
+                return query;
+
             try
             {
                 Expression<Func<T, bool>> condition = null;
@@ -169,13 +213,13 @@ namespace GenericFiltering
                 switch (propertyComparison)
                 {
                     case PropertyComparison.Equals:
-                        condition = GetExpressionEqual<T>(domainName, value, property.PropertyType);
+                        condition = GetExpressionEqual<T>(domainName, value);
                         break;
                     case PropertyComparison.Contains:
-                        condition = GetExpressionContains<T>(domainName, value, property.PropertyType);
+                        condition = GetExpressionContains<T>(domainName, value);
                         break;
                     default:
-                        condition = GetExpressionEqual<T>(domainName, value, property.PropertyType);
+                        condition = GetExpressionEqual<T>(domainName, value);
                         break;
                 }
 
@@ -184,8 +228,7 @@ namespace GenericFiltering
             }
             catch(Exception e)
             {
-                var type = property.PropertyType;
-                ParameterExpression pe = Expression.Parameter(property.PropertyType, domainName);
+                ParameterExpression pe = Expression.Parameter(type, domainName);
                 var param = Expression.Parameter(typeof(T));
 
                 var conditionEquals =
@@ -204,104 +247,145 @@ namespace GenericFiltering
     #endregion
 
     #region expressions
-        private static Expression<Func<T, bool>> GetExpressionContains<T>(string propertyName, object propertyValue, Type type)
+        private static Expression<Func<T, bool>> GetExpressionContains<T>(string propertyName, object propertyValue)
 	    { 
-	        var parameterExp = Expression.Parameter(typeof(T), "type"); 
-	        var propertyExp = Expression.Property(parameterExp, propertyName); 
-	        MethodInfo method = type.GetMethod("Contains", new[] { type }); 
-	        var someValue = Expression.Constant(propertyValue, type); 
-	        var containsMethodExp = Expression.Call(propertyExp, method, someValue); 
+	        var parameterExp = Expression.Parameter(typeof(T), "type");
+            var propType = parameterExp.Type.GetProperty(propertyName).PropertyType;
+
+            var propertyExp = Expression.Property(parameterExp, propertyName); 
+	        MethodInfo method = propType.GetMethod("Contains", new[] { propType });
+            var someValue = Expression.Convert(Expression.Constant(propertyValue), propType);
+            var containsMethodExp = Expression.Call(propertyExp, method, someValue); 
 	 	    return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameterExp); 
 	    }
-        private static Expression<Func<T, bool>> GetExpressionGreater<T>(string propertyName, object propertyValue, Type type)
+        private static Expression<Func<T, bool>> GetExpressionGreater<T>(string propertyName, object propertyValue)
         {
-            ParameterExpression pe = Expression.Parameter(type, propertyName);
             var param = Expression.Parameter(typeof(T));
+            var propType = param.Type.GetProperty(propertyName).PropertyType;
+
+            ParameterExpression pe = Expression.Parameter(propType, propertyName);
 
 
             var condition =
                 Expression.Lambda<Func<T, bool>>(
                     Expression.GreaterThan(
                         Expression.Property(param, propertyName),
-                        Expression.Constant(propertyValue, type)
+                       Expression.Convert(Expression.Constant(propertyValue), propType)
                     ), param);
 
 
             return condition;
         }
-        private static Expression<Func<T, bool>> GetExpressionGreaterOrEqual<T>(string propertyName, object propertyValue, Type type)
+        private static Expression<Func<T, bool>> GetExpressionGreaterOrEqual<T>(string propertyName, object propertyValue)
         {
-            ParameterExpression pe = Expression.Parameter(type, propertyName);
             var param = Expression.Parameter(typeof(T));
+            var propType = param.Type.GetProperty(propertyName).PropertyType;
+
+            ParameterExpression pe = Expression.Parameter(propType, propertyName);
 
 
             var condition =
                 Expression.Lambda<Func<T, bool>>(
                     Expression.GreaterThanOrEqual(
                         Expression.Property(param, propertyName),
-                        Expression.Constant(propertyValue, type)
+                       Expression.Convert(Expression.Constant(propertyValue), propType)
                     ), param);
 
 
             return condition;
         }
-        private static Expression<Func<T, bool>> GetExpressionLess<T>(string propertyName, object propertyValue, Type type)
+        private static Expression<Func<T, bool>> GetExpressionLess<T>(string propertyName, object propertyValue)
         {
-            ParameterExpression pe = Expression.Parameter(type, propertyName);
             var param = Expression.Parameter(typeof(T));
+            var propType = param.Type.GetProperty(propertyName).PropertyType;
+
+            ParameterExpression pe = Expression.Parameter(propType, propertyName);
 
 
             var condition =
                 Expression.Lambda<Func<T, bool>>(
                     Expression.LessThan(
                         Expression.Property(param, propertyName),
-                        Expression.Constant(propertyValue, type)
+                       Expression.Convert(Expression.Constant(propertyValue), propType)
                     ), param);
 
 
             return condition;
         }
-        private static Expression<Func<T, bool>> GetExpressionLessOrEqual<T>(string propertyName, object propertyValue, Type type)
+        private static Expression<Func<T, bool>> GetExpressionLessOrEqual<T>(string propertyName, object propertyValue)
         {
-            ParameterExpression pe = Expression.Parameter(type, propertyName);
             var param = Expression.Parameter(typeof(T));
+            var propType = param.Type.GetProperty(propertyName).PropertyType;
 
+            ParameterExpression pe = Expression.Parameter(propType, propertyName);
 
             var condition =
                 Expression.Lambda<Func<T, bool>>(
                     Expression.LessThanOrEqual(
                         Expression.Property(param, propertyName),
-                        Expression.Constant(propertyValue, type)
+                       Expression.Convert(Expression.Constant(propertyValue), propType)
                     ), param);
 
 
             return condition;
         }
-        private static Expression<Func<T, bool>> GetExpressionEqual<T>(string propertyName, object propertyValue, Type type)
+        private static Expression<Func<T, bool>> GetExpressionEqual<T>(string propertyName, object propertyValue)
         {
-            ParameterExpression pe = Expression.Parameter(type, propertyName);
+            Expression<Func<T, bool>> condition = null;
             var param = Expression.Parameter(typeof(T));
+            var propType = param.Type.GetProperty(propertyName).PropertyType;
 
+            ParameterExpression pe = Expression.Parameter(propType, propertyName);
 
-            var condition =
-                Expression.Lambda<Func<T, bool>>(
-                    Expression.Equal(
-                        Expression.Property(param, propertyName),
-                        Expression.Constant(propertyValue, type)
-                    ), param);
-
+            condition =
+            Expression.Lambda<Func<T, bool>>(
+                Expression.Equal(
+                    Expression.Property(param, propertyName),
+                    Expression.Convert(Expression.Constant(propertyValue), propType)
+                ), param);
 
             return condition;
         }
-    #endregion
+        #endregion
 
-    #region Helpers
-        private static string GetPropertyType(string type)
+        #region Helpers
+        private static bool CheckIfDefaultValue(object value, Type propertyType)
         {
             try
             {
+                object defaultValToCompare = Activator.CreateInstance(propertyType);
+
+                if (value.ToString() == defaultValToCompare?.ToString())
+                    return true;
+
+                return false;
+            }
+            catch(Exception e)
+            {
+                if (value == null)
+                    return true;
+
+                return false;
+            }
+        }
+        private static string GetPropertyType(PropertyInfo propertyInfo)
+        {
+            var type = propertyInfo.PropertyType.Name;
+
+            try
+            {
                 type = type.ToLower();
-                return _propertyDictionary.Where(x => x.Key == type).FirstOrDefault().Value;
+                var prop = _propertyDictionary.Where(x => x.Key == type).FirstOrDefault().Value;
+
+                if(prop == "nullable")
+                {
+                    var fullNameType = propertyInfo.PropertyType.FullName;
+                    var split = fullNameType.Split(new string[] { "," }, StringSplitOptions.None );
+                    var innerType = split[0].Split(new string[] { "." }, StringSplitOptions.None)[2];
+                    prop = _propertyDictionary.Where(x => x.Key == innerType.ToLower()).FirstOrDefault().Value;
+                }
+
+                return prop;
             }
             catch (Exception e)
             {
@@ -312,18 +396,23 @@ namespace GenericFiltering
         {
             { "int", "number" },
             { "int?", "number" },
+            { "decimal", "number" },
+            { "decimal?", "number" },
             { "int32", "number" },
             { "int64", "number" },
             { "int64?", "number" },
             { "long", "number" },
             { "long?", "number" },
             { "byte", "number" },
-            { "nullable`1", "number" },
+            { "nullable`1", "nullable" },
             { "string", "text" },
             { "string?", "text" },
             { "char?", "text" },
+            { "char", "text" },
             { "bool", "bool" },
             { "bool?", "bool" },
+            { "boolean?", "bool" },
+            { "boolean", "bool" },
             { "datetime", "date" },
         };
 
