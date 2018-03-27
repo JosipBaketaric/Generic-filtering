@@ -2,6 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using GenericFiltering.Test.Classes;
+using QueryFiltering;
+using QueryFiltering.Classes;
 
 namespace GenericFiltering.Test
 {
@@ -72,13 +75,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Id = 1;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Id", PropertyComparison.Greater));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "Id", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.Greater }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -99,13 +103,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Id = 1;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Id", PropertyComparison.Greater));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "Id", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.Greater }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -126,13 +131,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Id = 1;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Id", PropertyComparison.Less));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "Id", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.Less }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -154,13 +160,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Id = 1;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Id", PropertyComparison.Less));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "Id", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.Less }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -181,13 +188,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Id = 1;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Id", PropertyComparison.GreaterOrEqual));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "Id", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.GreaterOrEqual }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -208,13 +216,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Id = 1;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Id", PropertyComparison.GreaterOrEqual));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "Id", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.GreaterOrEqual }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -235,13 +244,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Id = 1;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Id", PropertyComparison.LessOrEqual));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "Id", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.LessOrEqual }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -262,13 +272,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Id = 1;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Id", PropertyComparison.LessOrEqual));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "Id", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.LessOrEqual }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert

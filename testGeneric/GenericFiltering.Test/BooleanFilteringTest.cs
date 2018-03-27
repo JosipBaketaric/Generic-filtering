@@ -2,6 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using GenericFiltering.Test.Classes;
+using QueryFiltering;
 
 namespace GenericFiltering.Test
 {

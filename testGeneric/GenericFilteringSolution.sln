@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericFiltering", "testGen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericFiltering.Test", "GenericFiltering.Test\GenericFiltering.Test.csproj", "{5D2BABA7-6434-4A63-87F8-9F17DD664BB1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryFiltering", "QueryFiltering\QueryFiltering.csproj", "{B697B7EC-F325-44B9-97C2-159367C521C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5D2BABA7-6434-4A63-87F8-9F17DD664BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D2BABA7-6434-4A63-87F8-9F17DD664BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D2BABA7-6434-4A63-87F8-9F17DD664BB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B697B7EC-F325-44B9-97C2-159367C521C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B697B7EC-F325-44B9-97C2-159367C521C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B697B7EC-F325-44B9-97C2-159367C521C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B697B7EC-F325-44B9-97C2-159367C521C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

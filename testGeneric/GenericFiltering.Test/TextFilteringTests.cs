@@ -2,6 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using GenericFiltering.Test.Classes;
+using QueryFiltering;
+using QueryFiltering.Classes;
 
 namespace GenericFiltering.Test
 {
@@ -79,13 +82,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Name = "d";
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Name", PropertyComparison.Contains));
+            FilterSettings settings = new FilterSettings();
+            settings.FilterName = "Name";
+            settings.PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.Contains;
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settings.ToList());
             var rez = query.ToList();
 
             //assert
@@ -110,13 +114,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.Name = "d";
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("Name", PropertyComparison.Equals));
+            FilterSettings settings = new FilterSettings();
+            settings.FilterName = "Name";
+            settings.PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.Equals;
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settings.ToList());
             var rez = query.ToList();
 
             //assert
@@ -199,7 +204,7 @@ namespace GenericFiltering.Test
             var rez = query.ToList();
 
             //assert
-            Assert.AreEqual(domainList.Where(x=> x.NAME == filter.Name).ToList().Count, rez.Count);
+            Assert.AreEqual(8, rez.Count);
         }
 
         [TestMethod]

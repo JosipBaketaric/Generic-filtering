@@ -53,12 +53,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FilterDTO.cs" />
-    <Compile Include="FilterQuery.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestDomain.cs" />
-    <Compile Include="TestDTO.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

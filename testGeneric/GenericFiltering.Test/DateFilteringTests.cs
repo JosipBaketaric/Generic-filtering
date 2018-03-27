@@ -2,6 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using QueryFiltering;
+using GenericFiltering.Test.Classes;
+using QueryFiltering.Classes;
 
 namespace GenericFiltering.Test
 {
@@ -79,13 +82,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.DatumTest = dateNow;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("DatumTest", PropertyComparison.Greater));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "DatumTest", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.Greater }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -109,13 +113,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.DatumTest = dateNow.AddDays(2);
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("DatumTest", PropertyComparison.Less));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "DatumTest", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.Less }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -139,13 +144,14 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.DatumTest = dateNow;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("DatumTest", PropertyComparison.GreaterOrEqual));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "DatumTest", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.GreaterOrEqual }
+            };
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
@@ -169,13 +175,15 @@ namespace GenericFiltering.Test
             var filter = new FilterDTO();
             filter.DatumTest = dateNow;
 
-            var customList = new List<KeyValuePair<string, PropertyComparison>>();
-            customList.Add(new KeyValuePair<string, PropertyComparison>("DatumTest", PropertyComparison.LessOrEqual));
+            List<FilterSettings> settingsList = new List<FilterSettings> {
+                new FilterSettings { FilterName= "DatumTest", PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.LessOrEqual }
+            };
+
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
             //act
-            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, null, customList);
+            query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, filter, settingsList);
             var rez = query.ToList();
 
             //assert
