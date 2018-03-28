@@ -12,6 +12,12 @@ using System.Threading.Tasks;
 
 namespace QueryFiltering
 {
+    /*
+     * ToLower za string
+     * https://stackoverflow.com/questions/42803007/how-to-convert-binding-expression-left-and-right-to-lower?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+     * 
+     * */
+
     public static class FilterQuery
     {
 
@@ -28,10 +34,11 @@ namespace QueryFiltering
         public static IQueryable<T> SetFilters<T, B>(IQueryable<T> query, B filter, List<FilterSettings> settingsList = null)
         {
             if (filter == null)
-                return query;
+                throw new ArgumentNullException("Parameter query is null");
+            if (filter == null)
+                throw new ArgumentNullException("Parameter filter is null");
 
             var predicate = PredicateBuilder.New<T>();
-
 
             List<PropertyInfo> properties = GetOrderedPropertyInfoArray<B>(settingsList);
 
@@ -44,6 +51,7 @@ namespace QueryFiltering
                 var handleType = GetPropertyType(property);
                 string domainName = "";
                 FilterSettings settings = null;
+                bool toLower = true;
 
                 if (settingsList != null)
                     settings = settingsList.Where(x => x.FilterName == name).ToList().FirstOrDefault();
@@ -83,9 +91,11 @@ namespace QueryFiltering
 
                     if(settings.ExpressionCombination != null)
                         customCombination = settings.ExpressionCombination.Value;
+
+                    toLower = settings.ToLower;
                 }
 
-                predicate = SwitchOnType(handleType, predicate, value, domainName, customComparison, customCombination, property.PropertyType);
+                predicate = SwitchOnType(handleType, predicate, value, domainName, customComparison, customCombination, property.PropertyType, toLower);
             }
 
 
@@ -105,7 +115,7 @@ namespace QueryFiltering
         }
 
         private static ExpressionStarter<T> SwitchOnType<T>(string handleType, ExpressionStarter<T> predicate, object value, string domainName,
-            PropertyComparisonTypeEnum propertyComparison, ExpressionCombinationTypeEnum customCombination, Type type)
+            PropertyComparisonTypeEnum propertyComparison, ExpressionCombinationTypeEnum customCombination, Type type, bool toLower)
         {
             switch (handleType)
             {
@@ -113,7 +123,7 @@ namespace QueryFiltering
                     predicate = HandleNumber(predicate, value, domainName, propertyComparison, customCombination, type);
                     break;
                 case "text":
-                    predicate = HandleText(predicate, value, domainName, propertyComparison, customCombination, type);
+                    predicate = HandleText(predicate, value, domainName, propertyComparison, customCombination, type, toLower);
                     break;
                 case "date":
                     predicate = HandleDate(predicate, value, domainName, propertyComparison, customCombination, type);
@@ -274,7 +284,7 @@ namespace QueryFiltering
         }
 
         private static ExpressionStarter<T> HandleText<T>(ExpressionStarter<T> predicate, object value, string domainName,
-            PropertyComparisonTypeEnum propertyComparison, ExpressionCombinationTypeEnum expressionCombination, Type type)
+            PropertyComparisonTypeEnum propertyComparison, ExpressionCombinationTypeEnum expressionCombination, Type type, bool toLower)
         {
             if (value == null)
                 return predicate;
@@ -287,16 +297,25 @@ namespace QueryFiltering
             switch (propertyComparison)
             {
                 case PropertyComparisonTypeEnum.Equals:
-                    condition = GetExpressionEqual<T>(domainName, value);
+                    if (type.Name.ToLower().Contains("char"))
+                        condition = GetExpressionEqual<T>(domainName, value);
+                    else
+                        condition = toLower == true ? GetExpressionEqualWithToLower<T>(domainName, value) : GetExpressionEqual<T>(domainName, value);
                     break;
                 case PropertyComparisonTypeEnum.Contains:
-                    condition = GetExpressionContains<T>(domainName, value);
+                    if (type.Name.ToLower().Contains("char"))
+                        condition = GetExpressionContains<T>(domainName, value);
+                    else
+                        condition = toLower == true ? GetExpressionContainsWithToLower<T>(domainName, value) : GetExpressionContains<T>(domainName, value);
                     break;
                 case PropertyComparisonTypeEnum.NotEqual:
                     condition = GetExpressionNotEqual<T>(domainName, value);
                     break;
                 default:
-                    condition = GetExpressionEqual<T>(domainName, value);
+                    if (type.Name.ToLower().Contains("char"))
+                        condition = GetExpressionEqual<T>(domainName, value);
+                    else
+                        condition = toLower == true ? GetExpressionEqualWithToLower<T>(domainName, value) : GetExpressionEqual<T>(domainName, value);
                     break;
             }
 
@@ -321,6 +340,7 @@ namespace QueryFiltering
         #region expressions
         private static Expression<Func<T, bool>> GetExpressionContains<T>(string propertyName, object propertyValue)
         {
+            /*
             var parameterExp = Expression.Parameter(typeof(T), "type");
             var propType = parameterExp.Type.GetProperty(propertyName).PropertyType;
 
@@ -329,6 +349,29 @@ namespace QueryFiltering
             var someValue = Expression.Convert(Expression.Constant(propertyValue), propType);
             var containsMethodExp = Expression.Call(propertyExp, method, someValue);
             return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameterExp);
+            */
+
+            Expression<Func<T, bool>> condition = null;
+            var param = Expression.Parameter(typeof(T));
+            var propType = param.Type.GetProperty(propertyName).PropertyType;
+            ParameterExpression pe = Expression.Parameter(propType, propertyName);
+            MethodInfo method = propType.GetMethod("Contains", new[] { propType });
+
+            var left = Expression.Property(param, propertyName);
+            var right = Expression.Convert(Expression.Constant(propertyValue), propType);
+
+            var nullCheckLeft = Expression.Equal(left, Expression.Constant(null, left.Type));
+            var nullCheckRight = Expression.Equal(right, Expression.Constant(null, right.Type));
+            var nullCheckBoth = Expression.OrElse(nullCheckLeft, nullCheckRight);
+
+            var methodBasic = Expression.Equal(left, right);
+            var methodContains = Expression.Call(left, method, right);
+
+            var workingMethod = Expression.Condition(nullCheckBoth, methodBasic, methodContains);
+
+            condition = Expression.Lambda<Func<T, bool>>(workingMethod, param);
+
+            return condition;
         }
         private static Expression<Func<T, bool>> GetExpressionGreater<T>(string propertyName, object propertyValue)
         {
@@ -433,6 +476,63 @@ namespace QueryFiltering
 
             return condition;
         }
+
+        private static Expression<Func<T, bool>> GetExpressionEqualWithToLower<T>(string propertyName, object propertyValue)
+        {
+            Expression<Func<T, bool>> condition = null;
+            var param = Expression.Parameter(typeof(T));
+            var propType = param.Type.GetProperty(propertyName).PropertyType;
+            ParameterExpression pe = Expression.Parameter(propType, propertyName);
+
+            var left = Expression.Property(param, propertyName);
+            var right = Expression.Convert(Expression.Constant(propertyValue), propType);
+
+            var nullCheckLeft = Expression.Equal(left, Expression.Constant(null, left.Type));
+            var nullCheckRight = Expression.Equal(right, Expression.Constant(null, right.Type));
+            var nullCheckBoth = Expression.OrElse(nullCheckLeft, nullCheckRight);
+
+            var leftToLower = Expression.Call(left, typeof(string).GetMethod("ToLower", System.Type.EmptyTypes));
+            var rightToLower = Expression.Call(right, typeof(string).GetMethod("ToLower", System.Type.EmptyTypes));
+
+            var methodEqual = Expression.Equal(leftToLower,rightToLower);
+            var methodEqualBasic = Expression.Equal(left, right);
+
+            var workingMethod = Expression.Condition(nullCheckBoth, methodEqualBasic, methodEqual);
+
+            condition = Expression.Lambda<Func<T, bool>>(workingMethod, param);
+
+            return condition;
+        }
+
+        private static Expression<Func<T, bool>> GetExpressionContainsWithToLower<T>(string propertyName, object propertyValue)
+        {
+            Expression<Func<T, bool>> condition = null;
+            var param = Expression.Parameter(typeof(T));
+            var propType = param.Type.GetProperty(propertyName).PropertyType;
+            ParameterExpression pe = Expression.Parameter(propType, propertyName);
+            MethodInfo method = propType.GetMethod("Contains", new[] { propType });
+
+            var left = Expression.Property(param, propertyName);
+            var right = Expression.Convert(Expression.Constant(propertyValue), propType);
+
+            var nullCheckLeft = Expression.Equal(left, Expression.Constant(null, left.Type));
+            var nullCheckRight = Expression.Equal(right, Expression.Constant(null, right.Type));
+            var nullCheckBoth = Expression.OrElse(nullCheckLeft, nullCheckRight);
+
+            var leftToLower = Expression.Call(left, typeof(string).GetMethod("ToLower", System.Type.EmptyTypes));
+            var rightToLower = Expression.Call(right, typeof(string).GetMethod("ToLower", System.Type.EmptyTypes));
+
+            var methodBasic = Expression.Equal(left, right);
+            var methodContains = Expression.Call(leftToLower, method, rightToLower);
+
+            var workingMethod = Expression.Condition(nullCheckBoth, methodBasic, methodContains);
+
+            condition = Expression.Lambda<Func<T, bool>>(workingMethod, param);
+
+            return condition;
+        }
+
+
         #endregion
 
         #region Helpers
@@ -474,7 +574,6 @@ namespace QueryFiltering
             resultList.AddRange(itemsToPlaceOnEndOfList);
             return resultList;
         }
-
         private static bool CheckIfPropertyWithNameExists<T>(string name)
         {
             PropertyInfo[] properties = typeof(T).GetProperties();

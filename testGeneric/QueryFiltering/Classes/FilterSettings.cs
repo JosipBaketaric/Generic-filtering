@@ -31,13 +31,15 @@ namespace QueryFiltering.Classes
         /// Flag that tells method not to include this property in filtering
         /// By default fals is used.
         /// </summary>
-        public bool? ExcludeFromFiltering { get; set; }
+        public bool? ExcludeFromFiltering { get; set; } = false;
+
+        /// <summary>
+        /// Flag that tells program if strings will first be set to lower and then evaluated. By default it is set tu true
+        /// </summary>
+        public bool ToLower { get; set; } = true;
 
         public FilterSettings()
         {
-            //PropertyComparison = PropertyComparisonEnum.Equals;
-            //ExpressionCombination = ExpressionCombinationEnum.And;
-            ExcludeFromFiltering = false;
         }
 
         public List<FilterSettings> ToList()

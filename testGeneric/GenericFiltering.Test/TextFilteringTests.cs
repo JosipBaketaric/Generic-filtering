@@ -35,7 +35,7 @@ namespace GenericFiltering.Test
             var rez = query.ToList();
 
             //assert
-            Assert.AreEqual(2, rez.Count);
+            Assert.AreEqual(3, rez.Count);
         }
 
         [TestMethod]
@@ -85,6 +85,7 @@ namespace GenericFiltering.Test
             FilterSettings settings = new FilterSettings();
             settings.FilterName = "Name";
             settings.PropertyComparison = QueryFiltering.Enums.PropertyComparisonTypeEnum.Contains;
+            settings.ToLower = false;
 
             IQueryable<TestDomain> query = domainList.AsQueryable();
 
@@ -129,6 +130,7 @@ namespace GenericFiltering.Test
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException),"Parameter filter is null")]
         public void TestNoFilter()
         {
             //arange
@@ -148,8 +150,6 @@ namespace GenericFiltering.Test
             query = FilterQuery.SetFilters<TestDomain, FilterDTO>(query, null);
             var rez = query.ToList();
 
-            //assert
-            Assert.AreEqual(domainList.Count, rez.Count);
         }
 
         [TestMethod]
