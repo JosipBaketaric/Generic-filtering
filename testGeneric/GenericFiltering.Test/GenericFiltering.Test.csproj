@@ -48,6 +48,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ExoticFilterDTO.cs" />
+    <Compile Include="Classes\ExoticTestDomain.cs" />
+    <Compile Include="ExoticTypesTests.cs" />
     <Compile Include="ExpressionCombinationTypeTest.cs" />
     <Compile Include="BooleanFilteringTest.cs" />
     <Compile Include="Classes\TestDomain.cs" />

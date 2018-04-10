@@ -28,13 +28,13 @@ namespace QueryFiltering.Classes
         public Nullable<ExpressionCombinationTypeEnum> ExpressionCombination { get; set; }
 
         /// <summary>
-        /// Flag that tells method not to include this property in filtering
+        /// Flag that tells not to include this property in filtering
         /// By default fals is used.
         /// </summary>
         public bool? ExcludeFromFiltering { get; set; } = false;
 
         /// <summary>
-        /// Flag that tells program if strings will first be set to lower and then evaluated. By default it is set tu true
+        /// Flag that tells if strings will first be set to lower and then evaluated. By default it is set tu true
         /// </summary>
         public bool ToLower { get; set; } = true;
 

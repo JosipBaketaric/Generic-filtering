@@ -12,12 +12,6 @@ using System.Threading.Tasks;
 
 namespace QueryFiltering
 {
-    /*
-     * ToLower za string
-     * https://stackoverflow.com/questions/42803007/how-to-convert-binding-expression-left-and-right-to-lower?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
-     * 
-     * */
-
     public static class FilterQuery
     {
 
@@ -71,11 +65,11 @@ namespace QueryFiltering
                         property.Name;
 
                     if (string.IsNullOrEmpty(domainName))
-                        throw new Exception();
+                        throw new Exception("Description not set!");
                 }
                 catch(Exception e)
                 {
-                    throw new Exception("Property (" + name + ") from filter class (" + typeof(B).FullName + ") doesn't have a description");
+                    throw new Exception("Property (" + name + ") from filter class (" + typeof(B).FullName + ") doesn't have a description", e);
                 }
 
                 if (!CheckIfPropertyWithNameExists<T>(domainName))
@@ -340,17 +334,6 @@ namespace QueryFiltering
         #region expressions
         private static Expression<Func<T, bool>> GetExpressionContains<T>(string propertyName, object propertyValue)
         {
-            /*
-            var parameterExp = Expression.Parameter(typeof(T), "type");
-            var propType = parameterExp.Type.GetProperty(propertyName).PropertyType;
-
-            var propertyExp = Expression.Property(parameterExp, propertyName);
-            MethodInfo method = propType.GetMethod("Contains", new[] { propType });
-            var someValue = Expression.Convert(Expression.Constant(propertyValue), propType);
-            var containsMethodExp = Expression.Call(propertyExp, method, someValue);
-            return Expression.Lambda<Func<T, bool>>(containsMethodExp, parameterExp);
-            */
-
             Expression<Func<T, bool>> condition = null;
             var param = Expression.Parameter(typeof(T));
             var propType = param.Type.GetProperty(propertyName).PropertyType;
@@ -631,7 +614,7 @@ namespace QueryFiltering
             }
             catch (Exception e)
             {
-                throw new Exception("Error in FilterMapper -> GetPropertyType.\n Mapping for property: " + type + " not existing");
+                throw new Exception("Error in FilterMapper -> GetPropertyType.\n Mapping for property: " + type + " not existing", e);
             }
         }
         private static Dictionary<string, string> _propertyDictionary = new Dictionary<string, string>
@@ -648,6 +631,8 @@ namespace QueryFiltering
             { "byte", "number" },
             { "double", "number" },
             { "double?", "number" },
+            { "float?", "number" },
+            { "float", "number" },
             { "nullable`1", "nullable" },
             { "string", "text" },
             { "string?", "text" },
@@ -658,6 +643,18 @@ namespace QueryFiltering
             { "boolean?", "bool" },
             { "boolean", "bool" },
             { "datetime", "date" },
+            { "single", "number" },
+            { "single?", "number" },
+            {"int16", "number" },
+            {"int16?", "number" },
+            {"sbyte", "number" },
+            {"sbyte?", "number" },
+            { "uint32", "number" },
+            { "uint32?", "number" },
+            {"uint64", "number" },
+            {"uint64?", "number" },
+            {"uint16", "number" },
+            {"uint16?", "number" }
         };
 
         #endregion
