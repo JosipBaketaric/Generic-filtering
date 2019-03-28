@@ -26,7 +26,7 @@ namespace GenericFiltering.Test
             domainList.Add(new ExoticTestDomain { FLOAT_PROP = 3.3F });
 
             //filter
-            filter.FLOAT_PROP = 1.1f;
+            filter.FloatProp = 1.1f;
 
 
             //act

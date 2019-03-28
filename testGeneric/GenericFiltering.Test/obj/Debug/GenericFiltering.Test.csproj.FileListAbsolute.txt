@@ -7,7 +7,6 @@ C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Te
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
-C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\obj\Debug\GenericFiltering.Test.csprojResolveAssemblyReference.cache
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\obj\Debug\GenericFiltering.Test.csproj.CoreCompileInputs.cache
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\obj\Debug\GenericFiltering.Test.dll
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\obj\Debug\GenericFiltering.Test.pdb
@@ -18,3 +17,5 @@ C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Te
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\bin\Debug\QueryFiltering.dll.config
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\bin\Debug\LinqKit.xml
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\bin\Debug\EntityFramework.xml
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\obj\Debug\GenericFiltering.Test.csprojAssemblyReference.cache
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\GenericFiltering.Test\obj\Debug\GenericFiltering.Test.csproj.CopyComplete

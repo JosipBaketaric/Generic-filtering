@@ -9,8 +9,7 @@ namespace GenericFiltering.Test.Classes
 {
     public class ExoticFilterDTO
     {
-        [Description("FLOAT_PROP")]
-        public float FLOAT_PROP { get; set; }
+        public float FloatProp { get; set; }
 
         [Description("FLOAT_PROP_NULLABLE")]
         public float? FLOAT_PROP_NULLABLE { get; set; }

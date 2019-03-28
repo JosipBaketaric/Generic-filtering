@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace QueryFiltering
@@ -43,39 +44,19 @@ namespace QueryFiltering
                 var customCombination = ExpressionCombinationTypeEnum.And;
                 var name = property.Name;
                 var handleType = GetPropertyType(property);
-                string domainName = "";
                 FilterSettings settings = null;
                 bool toLower = true;
 
                 if (settingsList != null)
                     settings = settingsList.Where(x => x.FilterName == name).ToList().FirstOrDefault();
 
-                if(settings != null)
+                if (settings != null)
                 {
                     //if yes then skip this prop
                     if (settings.ExcludeFromFiltering.HasValue && settings.ExcludeFromFiltering.Value == true)
                         continue;
                 }
-
-
-                try
-                {
-                    domainName = Attribute.IsDefined(property, typeof(DescriptionAttribute)) ?
-                        (Attribute.GetCustomAttribute(property, typeof(DescriptionAttribute)) as DescriptionAttribute).Description :
-                        property.Name;
-
-                    if (string.IsNullOrEmpty(domainName))
-                        throw new Exception("Description not set!");
-                }
-                catch(Exception e)
-                {
-                    throw new Exception("Property (" + name + ") from filter class (" + typeof(B).FullName + ") doesn't have a description", e);
-                }
-
-                if (!CheckIfPropertyWithNameExists<T>(domainName))
-                {
-                    throw new Exception("Property from DTO (" + name + ") has a description (" + domainName + ") that doesn't match any property from class (" + typeof(T).FullName + "). Either set description to match target property from domain class or set in FilterSettings ExcludeFromFiltering flag to true for this property");
-                }
+                string domainName = GetTargetPropertyName<T, B>(property, name);
 
 
                 if (settings != null)
@@ -83,7 +64,7 @@ namespace QueryFiltering
                     if (settings.PropertyComparison != null)
                         customComparison = settings.PropertyComparison.Value;
 
-                    if(settings.ExpressionCombination != null)
+                    if (settings.ExpressionCombination != null)
                         customCombination = settings.ExpressionCombination.Value;
 
                     toLower = settings.ToLower;
@@ -132,8 +113,10 @@ namespace QueryFiltering
             return predicate;
         }
 
+
+
         #region Handlers
-        private static ExpressionStarter<T> HandleBool<T>(ExpressionStarter<T> predicate, object value, string domainName, 
+        private static ExpressionStarter<T> HandleBool<T>(ExpressionStarter<T> predicate, object value, string domainName,
             PropertyComparisonTypeEnum propertyComparison, ExpressionCombinationTypeEnum expressionCombination)
         {
             if (value == null)
@@ -141,20 +124,7 @@ namespace QueryFiltering
 
             value = (bool)value;
 
-            Expression<Func<T, bool>> condition = null;
-
-            switch (propertyComparison)
-            {
-                case PropertyComparisonTypeEnum.Equals:
-                    condition = GetExpressionEqual<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.NotEqual:
-                    condition = GetExpressionNotEqual<T>(domainName, value);
-                    break;
-                default:
-                    condition = GetExpressionEqual<T>(domainName, value);
-                    break;
-            }
+            Expression<Func<T, bool>> condition = GetExpression<T>(propertyComparison, value, domainName);
 
             switch (expressionCombination)
             {
@@ -172,7 +142,7 @@ namespace QueryFiltering
             return predicate;
         }
 
-        private static ExpressionStarter<T> HandleNumber<T>(ExpressionStarter<T> predicate, object value, string domainName, 
+        private static ExpressionStarter<T> HandleNumber<T>(ExpressionStarter<T> predicate, object value, string domainName,
             PropertyComparisonTypeEnum propertyComparison, ExpressionCombinationTypeEnum expressionCombination, Type type)
         {
             if (value == null)
@@ -181,32 +151,7 @@ namespace QueryFiltering
             if (CheckIfDefaultValue(value, type))
                 return predicate;
 
-            Expression<Func<T, bool>> condition = null; ;
-
-            switch (propertyComparison)
-            {
-                case PropertyComparisonTypeEnum.Equals:
-                    condition = GetExpressionEqual<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.Greater:
-                    condition = GetExpressionGreater<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.Less:
-                    condition = GetExpressionLess<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.GreaterOrEqual:
-                    condition = GetExpressionGreaterOrEqual<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.LessOrEqual:
-                    condition = GetExpressionLessOrEqual<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.NotEqual:
-                    condition = GetExpressionNotEqual<T>(domainName, value);
-                    break;
-                default:
-                    condition = GetExpressionEqual<T>(domainName, value);
-                    break;
-            }
+            Expression<Func<T, bool>> condition = GetExpression<T>(propertyComparison, value, domainName);
 
             switch (expressionCombination)
             {
@@ -224,7 +169,7 @@ namespace QueryFiltering
             return predicate;
         }
 
-        private static ExpressionStarter<T> HandleDate<T>(ExpressionStarter<T> predicate, object value, string domainName, 
+        private static ExpressionStarter<T> HandleDate<T>(ExpressionStarter<T> predicate, object value, string domainName,
             PropertyComparisonTypeEnum propertyComparison, ExpressionCombinationTypeEnum expressionCombination, Type type)
         {
             if (value == null)
@@ -234,32 +179,8 @@ namespace QueryFiltering
             if (CheckIfDefaultValue(value, type))
                 return predicate;
 
-            Expression<Func<T, bool>> condition = null;
+            Expression<Func<T, bool>> condition = GetExpression<T>(propertyComparison, value, domainName);
 
-            switch (propertyComparison)
-            {
-                case PropertyComparisonTypeEnum.Equals:
-                    condition = GetExpressionEqual<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.Greater:
-                    condition = GetExpressionGreater<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.Less:
-                    condition = GetExpressionLess<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.GreaterOrEqual:
-                    condition = GetExpressionGreaterOrEqual<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.LessOrEqual:
-                    condition = GetExpressionLessOrEqual<T>(domainName, value);
-                    break;
-                case PropertyComparisonTypeEnum.NotEqual:
-                    condition = GetExpressionNotEqual<T>(domainName, value);
-                    break;
-                default:
-                    condition = GetExpressionEqual<T>(domainName, value);
-                    break;
-            }
 
             switch (expressionCombination)
             {
@@ -329,9 +250,43 @@ namespace QueryFiltering
             return predicate;
         }
 
+
         #endregion
 
         #region expressions
+        private static Expression<Func<T, bool>> GetExpression<T>(PropertyComparisonTypeEnum propertyComparison, object value, string domainName)
+        {
+            Expression<Func<T, bool>> condition = null;
+
+            switch (propertyComparison)
+            {
+                case PropertyComparisonTypeEnum.Equals:
+                    condition = GetExpressionEqual<T>(domainName, value);
+                    break;
+                case PropertyComparisonTypeEnum.Greater:
+                    condition = GetExpressionGreater<T>(domainName, value);
+                    break;
+                case PropertyComparisonTypeEnum.Less:
+                    condition = GetExpressionLess<T>(domainName, value);
+                    break;
+                case PropertyComparisonTypeEnum.GreaterOrEqual:
+                    condition = GetExpressionGreaterOrEqual<T>(domainName, value);
+                    break;
+                case PropertyComparisonTypeEnum.LessOrEqual:
+                    condition = GetExpressionLessOrEqual<T>(domainName, value);
+                    break;
+                case PropertyComparisonTypeEnum.NotEqual:
+                    condition = GetExpressionNotEqual<T>(domainName, value);
+                    break;
+                default:
+                    condition = GetExpressionEqual<T>(domainName, value);
+                    break;
+            }
+
+            return condition;
+        }
+
+
         private static Expression<Func<T, bool>> GetExpressionContains<T>(string propertyName, object propertyValue)
         {
             Expression<Func<T, bool>> condition = null;
@@ -477,7 +432,7 @@ namespace QueryFiltering
             var leftToLower = Expression.Call(left, typeof(string).GetMethod("ToLower", System.Type.EmptyTypes));
             var rightToLower = Expression.Call(right, typeof(string).GetMethod("ToLower", System.Type.EmptyTypes));
 
-            var methodEqual = Expression.Equal(leftToLower,rightToLower);
+            var methodEqual = Expression.Equal(leftToLower, rightToLower);
             var methodEqualBasic = Expression.Equal(left, right);
 
             var workingMethod = Expression.Condition(nullCheckBoth, methodEqualBasic, methodEqual);
@@ -519,6 +474,42 @@ namespace QueryFiltering
         #endregion
 
         #region Helpers
+        private static string GetTargetPropertyName<T, B>(PropertyInfo property, string name)
+        {
+            string domainName = "";
+
+            //First check description attribute
+
+            domainName = Attribute.IsDefined(property, typeof(DescriptionAttribute)) ?
+                (Attribute.GetCustomAttribute(property, typeof(DescriptionAttribute)) as DescriptionAttribute).Description :
+                "";
+
+            if (!string.IsNullOrEmpty(domainName))
+            {
+                if (!CheckIfPropertyWithNameExists<T>(domainName))
+                {
+                    throw new Exception("Property from DTO (" + name + ") has a description (" + domainName + ") that doesn't match any property from class (" + typeof(T).FullName + "). Either set description to match target property from domain class or set in FilterSettings ExcludeFromFiltering flag to true for this property");
+                }
+                return domainName;
+            }
+
+
+            // Check Same Names convention
+            if (CheckIfPropertyWithNameExists<T>(name))
+            {
+                return name;
+            }
+
+            // Oracle based convention
+            string oracleFormatedName = ConvertDtoNameToDatabaseNameOracleConvention(name);
+
+            if (CheckIfPropertyWithNameExists<T>(oracleFormatedName))
+            {
+                return oracleFormatedName;
+            }
+
+            throw new Exception($"DTO property {name} doesn't match any property from class {typeof(T).FullName}. Either use convention based naming or set description attribute.");
+        }
         private static List<PropertyInfo> GetOrderedPropertyInfoArray<T>(List<FilterSettings> settingsList)
         {
             var resultList = new List<PropertyInfo>();
@@ -534,14 +525,14 @@ namespace QueryFiltering
                 return resultList;
 
 
-            foreach(var prop in resultList)
+            foreach (var prop in resultList)
             {
                 FilterSettings settings = null;
 
                 if (settingsList != null)
                     settings = settingsList.Where(x => x.FilterName == prop.Name).ToList().FirstOrDefault();
 
-                if(settings != null)
+                if (settings != null)
                 {
                     if (settings.ExpressionCombination != null && settings.ExpressionCombination.Value == ExpressionCombinationTypeEnum.Or)
                     {
@@ -550,7 +541,8 @@ namespace QueryFiltering
                 }
             }
 
-            itemsToPlaceOnEndOfList.ForEach(x => {
+            itemsToPlaceOnEndOfList.ForEach(x =>
+            {
                 resultList.Remove(x);
             });
 
@@ -563,7 +555,7 @@ namespace QueryFiltering
             foreach (PropertyInfo property in properties)
             {
                 var domainName = property.Name;
-                if(domainName == name)
+                if (domainName == name)
                 {
                     return true;
                 }
@@ -656,6 +648,17 @@ namespace QueryFiltering
             {"uint16", "number" },
             {"uint16?", "number" }
         };
+        private static string SplitCamelCase(string str)
+        {
+            return Regex.Replace(Regex.Replace(str, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
+        }
+        private static string ConvertDtoNameToDatabaseNameOracleConvention(string name)
+        {
+            //TestFkSomethingName => TEST_FK_SOMETHING_NAME
+            string splitName = SplitCamelCase(name);
+            string result = splitName.Replace(" ", "_").ToUpper();
+            return result;
+        }
 
         #endregion
 

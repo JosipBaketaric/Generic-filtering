@@ -1,6 +1,5 @@
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\bin\Debug\QueryFiltering.dll
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\bin\Debug\QueryFiltering.pdb
-C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\obj\Debug\QueryFiltering.csprojResolveAssemblyReference.cache
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\obj\Debug\QueryFiltering.csproj.CoreCompileInputs.cache
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\obj\Debug\QueryFiltering.dll
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\obj\Debug\QueryFiltering.pdb
@@ -11,3 +10,5 @@ C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\bin\
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\bin\Debug\EntityFramework.xml
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\bin\Debug\EntityFramework.SqlServer.xml
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\bin\Debug\LinqKit.xml
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\obj\Debug\QueryFiltering.csprojAssemblyReference.cache
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\QueryFiltering\obj\Debug\QueryFiltering.csproj.CopyComplete

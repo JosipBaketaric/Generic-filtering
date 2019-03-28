@@ -29,7 +29,7 @@ namespace QueryFiltering.Classes
 
         /// <summary>
         /// Flag that tells not to include this property in filtering
-        /// By default fals is used.
+        /// By default false is used.
         /// </summary>
         public bool? ExcludeFromFiltering { get; set; } = false;
 

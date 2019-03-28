@@ -10,4 +10,5 @@ C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\bin\Deb
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\GenericFiltering.csproj.CoreCompileInputs.cache
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\testGeneric.exe
 C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\testGeneric.pdb
-C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\GenericFiltering.csprojResolveAssemblyReference.cache
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\GenericFiltering.csprojAssemblyReference.cache
+C:\Users\josipba\Documents\CTK\Generic-filtering\testGeneric\testGeneric\obj\Debug\GenericFiltering.csproj.CopyComplete
